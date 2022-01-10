@@ -3,6 +3,7 @@
 #include <LiquidCrystal_I2C.h>
 #include <HX711.h>
 #include <SRF05.h>
+#include <Servo.h>
 
 // Set LCD columns and rows
 const int lcdCols = 16;
@@ -20,7 +21,13 @@ const float calibrationFactor = -206650; // Adjusted accordingly
 // SRF05 pins
 const int trigger = 5;
 const int echo = 18;
+// SRF05
 SRF05 srf(trigger, echo);
+
+// Servo pins
+const int servoPin = 13;
+// Servo
+Servo servo;
 
 void setupLCD()
 {
@@ -38,6 +45,11 @@ void setupLoadCell()
 void setupUltrasonic()
 {
   srf.setCorrectionFactor(1.035);
+}
+
+void setupServo()
+{
+  servo.attach(servoPin);
 }
 
 // Get the distance measured from ultrasonic sensor.
@@ -86,16 +98,33 @@ void displayWeight()
   lcd.printf("%*s%d gr", lSpacing, " ", roundedWeight);              // Value
 }
 
+// Used to move servo hand
+void moveServo()
+{
+  for (int pos = 0; pos <= 180; pos += 1)
+  {
+    servo.write(pos);
+    delay(5);
+  }
+  for (int pos = 180; pos >= 0; pos -= 1)
+  {
+    servo.write(pos);
+    delay(5);
+  }
+}
+
 void setup()
 {
   Serial.begin(115200);
   setupLCD();
   setupLoadCell();
   setupUltrasonic();
+  setupServo();
 }
 
 void loop()
 {
-  displayDist();
+  // displayDist();
   // displayWeight();
+  moveServo();
 }
