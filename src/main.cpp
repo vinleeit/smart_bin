@@ -28,6 +28,8 @@ SRF05 srf(trigger, echo);
 const int servoPin = 13;
 // Servo
 Servo servo;
+bool isLidOpen = false;
+int pos = 0;
 
 void setupLCD()
 {
@@ -98,7 +100,7 @@ void displayWeight()
   lcd.printf("%*s%d gr", lSpacing, " ", roundedWeight);              // Value
 }
 
-// Used to move servo hand
+// Used to move servo hand (for testing)
 void moveServo()
 {
   for (int pos = 0; pos <= 180; pos += 1)
@@ -113,6 +115,40 @@ void moveServo()
   }
 }
 
+// Controls lid: open or close it depending on the ultrasonic sensor.
+// If an object, such as a hand, is placed under 8 cm from the sensor,
+// The lid of the rubbish bin will open. Otherwise, it will close.
+void lidController()
+{
+  double dist = getDist();
+  if (dist < 8)
+  {
+    if (!isLidOpen)
+    {
+      for (; pos <= 180; pos += 1)
+      {
+        servo.write(pos);
+        delay(3);
+      }
+      isLidOpen = true;
+    }
+  }
+  else
+  {
+    if (isLidOpen)
+    {
+      delay(1500);
+      for (; pos >= 0; pos -= 1)
+      {
+        servo.write(pos);
+        delay(3);
+      }
+      isLidOpen = false;
+    }
+  }
+}
+
+// Entry point
 void setup()
 {
   Serial.begin(115200);
@@ -122,9 +158,11 @@ void setup()
   setupServo();
 }
 
+// Body
 void loop()
 {
   // displayDist();
   // displayWeight();
-  moveServo();
+  // moveServo();
+  lidController();
 }
