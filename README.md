@@ -68,7 +68,7 @@
 | 9V battery clip | 1        |
 | Switch          | 1        |
 
-### Libraries
+## Libraries
 
 | Title              | Creator       | Version |
 | ------------------ | ------------- | ------- |
