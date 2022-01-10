@@ -1,5 +1,15 @@
 # Smart Dustbin
 
+## Members
+
+- Almada Putra
+
+- Arvin Lee
+
+- Gadtardi Wongkaren
+
+- Jeconiah Richard
+
 ## Background
 
 ## Features
