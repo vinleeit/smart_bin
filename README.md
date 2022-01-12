@@ -70,12 +70,12 @@
 
 ## Libraries
 
-| Title              | Creator       | Version |
-| ------------------ | ------------- | ------- |
-| LiquidCrystal\_I2C | macroschwartz | 1.1.4   |
-| HX711              | bodge         | 0.7.5   |
-| SRF05              | robtillaart   | 0.1.2   |
-| ServoESP32         | roboticsbrno  | 1.0.3   |
+| Title              | Creator                       | Version | Github Link                                                                        |
+| ------------------ | ----------------------------- | ------- | ---------------------------------------------------------------------------------- |
+| LiquidCrystal\_I2C | macroschwartz \[johnrickman\] | 1.1.4   | [/johnrickman/LiquidCrystal_I2C](https://github.com/johnrickman/LiquidCrystal_I2C) |
+| HX711              | bodge                         | 0.7.5   | [/bodge/HX711](https://github.com/bogde/HX711)                                     |
+| SRF05              | robtillaart                   | 0.1.2   | [/RobTillaart/SRF05](https://github.com/RobTillaart/SRF05)                         |
+| ServoESP32         | roboticsbrno                  | 1.0.3   | [/RoboticsBrno/ServoESP32](https://github.com/RoboticsBrno/ServoESP32)             |
 
 ## Ports
 
