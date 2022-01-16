@@ -23,6 +23,7 @@ const int motionTrigger = 5;
 const int motionEcho = 18;
 // Motion SRF05
 SRF05 motionSrf(motionTrigger, motionEcho);
+const double motionCorrectionFactor = 1.035;
 const int maxMotionDist = 8; // In centimeters
 
 // Height SRF05 pins
@@ -30,6 +31,7 @@ const int heightTrigger = 25;
 const int heightEcho = 26;
 // Height SRF05
 SRF05 heightSrf(heightTrigger, heightEcho);
+const double heightCorrectionFactor = 1.035;
 
 // Servo pins
 const int servoPin = 13;
@@ -38,46 +40,11 @@ Servo servo;
 bool isLidOpen = false;
 int pos = 0;
 
-void setupLCD()
-{
-  lcd.init();      // initialize LCD
-  lcd.backlight(); // turn on LCD backlight
-}
 
-void setupLoadCell()
-{
-  scale.begin(dout, clk);
-  scale.set_scale(calibrationFactor);
-  scale.tare();
-}
-
-void setupUltrasonic()
-{
-  motionSrf.setCorrectionFactor(1.035);
-  heightSrf.setCorrectionFactor(1.035);
-}
-
-void setupServo()
-{
-  servo.attach(servoPin);
-}
-
-// For motion detection to open lid
-bool detectMotion()
-{
-  return (motionSrf.getCentimeter() <= 8);
-}
-
-// Get rubbish height / space left inside the bin
-double getHeight()
-{
-  return heightSrf.getCentimeter();
-}
-
-// Display height of rubbish inside the bin. The distance is obtained from the [getHeight] function.
+// Display height of rubbish inside the bin.
 void displayHeight()
 {
-  double dist = getHeight();
+  const double dist = heightSrf.getCentimeter();
   int roundedDist = (int)(dist + 0.5); // Round distance to decimal point
 
   lcd.setCursor(0, 0);     // First row
@@ -88,17 +55,10 @@ void displayHeight()
   lcd.printf("%*s%d cm", lSpacing, " ", roundedDist);              // Value
 }
 
-// Get the weight of any object rested on top of the load cell.
-double getWeight()
-{
-  return scale.get_units() * -1000;
-}
-
-// Display any object's weight into the LCD. The weight is obtained from
-// the [getWeight] function.
+// Display any object's weight into the LCD.
 void displayWeight()
 {
-  double weight = getWeight();
+  double weight = scale.get_units() * -1000;
   if (weight < 1)
   {
     // Remove weight noises under 1 gram
@@ -114,27 +74,12 @@ void displayWeight()
   lcd.printf("%*s%d gr", lSpacing, " ", roundedWeight);              // Value
 }
 
-// Used to move servo hand (for testing)
-void moveServo()
-{
-  for (int pos = 0; pos <= 180; pos += 1)
-  {
-    servo.write(pos);
-    delay(5);
-  }
-  for (int pos = 180; pos >= 0; pos -= 1)
-  {
-    servo.write(pos);
-    delay(5);
-  }
-}
-
 // Controls lid: open or close it depending on the ultrasonic sensor.
 // If an object, such as a hand, is placed under 8 cm from the sensor,
 // The lid of the rubbish bin will open. Otherwise, it will close.
 void lidController()
 {
-  const int ok = detectMotion();
+  const bool ok = (motionSrf.getCentimeter() <= maxMotionDist);
   if (ok)
   {
     if (!isLidOpen)
@@ -166,17 +111,28 @@ void lidController()
 void setup()
 {
   Serial.begin(115200);
-  setupLCD();
-  setupLoadCell();
-  setupUltrasonic();
-  setupServo();
+
+  // Setup LCD
+  lcd.init();      // initialize LCD
+  lcd.backlight(); // turn on LCD backlight
+
+  // Load cell setup
+  scale.begin(dout, clk);
+  scale.set_scale(calibrationFactor);
+  scale.tare();
+
+  // Setup ultrasonic
+  motionSrf.setCorrectionFactor(motionCorrectionFactor);
+  heightSrf.setCorrectionFactor(heightCorrectionFactor);
+
+  // Setup servo
+  servo.attach(servoPin);
 }
 
 // Body
 void loop()
 {
   displayHeight();
-  // displayWeight();
-  // moveServo();
+  displayWeight();
   lidController();
 }
