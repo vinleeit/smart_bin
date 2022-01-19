@@ -19,16 +19,16 @@ HX711 scale;
 const float calibrationFactor = -206650; // Adjusted accordingly
 
 // Motion SRF05 pins
-const int motionTrigger = 5;
-const int motionEcho = 18;
+const int motionTrigger = 26;
+const int motionEcho = 25;
 // Motion SRF05
 SRF05 motionSrf(motionTrigger, motionEcho);
 const double motionCorrectionFactor = 1.035;
 const int maxMotionDist = 8; // In centimeters
 
 // Height SRF05 pins
-const int heightTrigger = 25;
-const int heightEcho = 26;
+const int heightTrigger = 5;
+const int heightEcho = 18;
 // Height SRF05
 SRF05 heightSrf(heightTrigger, heightEcho);
 const double heightCorrectionFactor = 1.035;
@@ -40,71 +40,19 @@ Servo servo;
 bool isLidOpen = false;
 int pos = 0;
 
+int count = 0;
+int curDispIndex = 0;
 
-// Display height of rubbish inside the bin.
-void displayHeight()
+void display(String title, double val, String unit)
 {
-  const double dist = heightSrf.getCentimeter();
-  int roundedDist = (int)(dist + 0.5); // Round distance to decimal point
+  lcd.setCursor(0, 0);      // First row
+  lcd.printf("%s:", title); // Label
 
-  lcd.setCursor(0, 0);     // First row
-  lcd.printf("Distance:"); // Label
+  int roundedVal = (int)(val + 0.5); // Round distance to decimal point
 
-  lcd.setCursor(0, 1);                                             // Second row
-  int lSpacing = lcdCols - 4 - floor(log10(abs(roundedDist) + 1)); // Left spacing
-  lcd.printf("%*s%d cm", lSpacing, " ", roundedDist);              // Value
-}
-
-// Display any object's weight into the LCD.
-void displayWeight()
-{
-  double weight = scale.get_units() * -1000;
-  if (weight < 1)
-  {
-    // Remove weight noises under 1 gram
-    weight = 0;
-  }
-  int roundedWeight = (int)(weight + 0.5); // Round weight to decimal point
-
-  lcd.setCursor(0, 0);   // First row
-  lcd.printf("Weight:"); // Label
-
-  lcd.setCursor(0, 1);                                               // Second row
-  int lSpacing = lcdCols - 4 - floor(log10(abs(roundedWeight) + 1)); // Left spacing
-  lcd.printf("%*s%d gr", lSpacing, " ", roundedWeight);              // Value
-}
-
-// Controls lid: open or close it depending on the ultrasonic sensor.
-// If an object, such as a hand, is placed under 8 cm from the sensor,
-// The lid of the rubbish bin will open. Otherwise, it will close.
-void lidController()
-{
-  const bool ok = (motionSrf.getCentimeter() <= maxMotionDist);
-  if (ok)
-  {
-    if (!isLidOpen)
-    {
-      for (; pos <= 180; pos += 1)
-      {
-        servo.write(pos);
-        delay(3);
-      }
-      isLidOpen = true;
-    }
-  }
-  else
-  {
-    if (isLidOpen)
-    {
-      delay(1500);
-      for (; pos >= 0; pos -= 1)
-      {
-        servo.write(pos);
-        delay(3);
-      }
-      isLidOpen = false;
-    }
-  }
+  lcd.setCursor(0, 1);                                                            // Second row
+  int lSpacing = lcdCols - floor(log10(abs(roundedVal) + 1)) - 2 - unit.length(); // Left spacing
+  lcd.printf("%*s%d %s", lSpacing, " ", roundedVal, unit);                        // Value
 }
 
 // Entry point
@@ -132,7 +80,65 @@ void setup()
 // Body
 void loop()
 {
-  displayHeight();
-  displayWeight();
-  lidController();
+  if ((count % 10) == 0)
+  {
+    curDispIndex += 1;
+    if (curDispIndex > 1)
+    {
+      curDispIndex = 0;
+    }
+    lcd.clear();
+  }
+
+  if (curDispIndex == 0)
+  {
+    const double dist = heightSrf.getCentimeter();
+
+    // Display height of rubbish inside the bin.
+    display("Distance", dist, "cm");
+  }
+  else if (curDispIndex == 1)
+  {
+    double weight = scale.get_units() * -1000;
+    if (weight < 1)
+    {
+      // Remove weight noises under 1 gram
+      weight = 0;
+    }
+
+    // Display any object's weight into the LCD.
+    display("Weight", weight, "gr");
+  }
+
+  // Controls lid: open or close it depending on the ultrasonic sensor.
+  // If an object, such as a hand, is placed under 8 cm from the sensor,
+  // The lid of the rubbish bin will open. Otherwise, it will close.
+  const bool ok = (motionSrf.getCentimeter() <= maxMotionDist);
+  if (ok)
+  {
+    if (!isLidOpen)
+    {
+      for (; pos <= 180; pos += 1)
+      {
+        servo.write(pos);
+        delay(3);
+      }
+      isLidOpen = true;
+    }
+  }
+  else
+  {
+    if (isLidOpen)
+    {
+      delay(1500);
+      for (; pos >= 0; pos -= 1)
+      {
+        servo.write(pos);
+        delay(3);
+      }
+      isLidOpen = false;
+    }
+  }
+  count += 1;
+  delay(500);
 }
