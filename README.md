@@ -1,5 +1,7 @@
 # Smart Rubbish Bin
 
+![](./assets/images/smart_bin.jpg)
+
 ## Members
 
 - Almada Putra
@@ -79,14 +81,17 @@
 
 ## Ports
 
-| Port   | Usage      | Name    |
-| ------ | ---------- | ------- |
-| GPIO18 | Ultrasonic | echo    |
-| GPIO05 | Ultrasonic | trigger |
-| GPIO21 | LCD        | sda     |
-| GPIO22 | LCD        | slc     |
-| GPIO33 | Load Cell  | dout    |
-| GPIO32 | Load Cell  | clk     |
+| Port   | Usage             | Name    |
+| ------ | ----------------- | ------- |
+| GPIO18 | Height Ultrasonic | echo    |
+| GPIO05 | Height Ultrasonic | trigger |
+| GPIO25 | Motion Ultrasonic | echo    |
+| GPIO26 | Motion Ultrasonic | trigger |
+| GPIO21 | LCD               | sda     |
+| GPIO22 | LCD               | slc     |
+| GPIO33 | Load Cell         | dout    |
+| GPIO32 | Load Cell         | clk     |
+| GPIO13 | Servo             | \-      |
 
 ## Useful Links
 
