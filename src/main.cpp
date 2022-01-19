@@ -1,9 +1,17 @@
 #include <Arduino.h>
+#include <WiFi.h>
+#include <HTTPClient.h>
+#include <ArduinoJson.h>
 
 #include <LiquidCrystal_I2C.h>
 #include <HX711.h>
 #include <SRF05.h>
 #include <Servo.h>
+
+// Wifi
+const char *ssid = "fedora";
+const char *password = "asdfghjkl";
+const char *baseUrl = "https://718hwblzg0.execute-api.ap-northeast-1.amazonaws.com%s";
 
 // Set LCD columns and rows
 const int lcdCols = 16;
@@ -43,6 +51,31 @@ int pos = 0;
 int count = 0;
 int curDispIndex = 0;
 
+int sendData(char *data, char *endpoint)
+{
+  HTTPClient http;
+  /* WiFiClientSecure WiFiClient; */
+  char servername[100];
+  sprintf(servername, baseUrl, endpoint);
+  Serial.println(servername);
+  Serial.println(data);
+  // Your Domain name with URL path or IP address with path
+  http.setTimeout(2500);
+
+  http.useHTTP10(true);
+  /* http.begin(WiFiClient, servername); */
+  http.begin(servername);
+
+  // Specify content-type header
+  http.addHeader("Content-Type", "application/json");
+
+  // Send HTTP POST request
+  int result = http.POST(data);
+  Serial.println(http.getString());
+  http.end();
+  return result;
+}
+
 void display(String title, double val, String unit)
 {
   lcd.setCursor(0, 0);      // First row
@@ -59,6 +92,19 @@ void display(String title, double val, String unit)
 void setup()
 {
   Serial.begin(115200);
+
+  // Setup wifi
+  WiFi.begin(ssid, password);
+  Serial.print("Connecting");
+  while (WiFi.status() != WL_CONNECTED)
+  {
+    delay(500);
+    Serial.print(".");
+  }
+  Serial.println("");
+  Serial.print("Connected to WiFi network with IP Address: ");
+  Serial.println(WiFi.localIP());
+  Serial.println("Timer set to 5 seconds (timerDelay variable), it will take 5 seconds before publishing the first reading.");
 
   // Setup LCD
   lcd.init();      // initialize LCD
@@ -80,6 +126,7 @@ void setup()
 // Body
 void loop()
 {
+
   if ((count % 10) == 0)
   {
     curDispIndex += 1;
@@ -101,8 +148,7 @@ void loop()
   {
     double weight = scale.get_units() * -1000;
     if (weight < 1)
-    {
-      // Remove weight noises under 1 gram
+    { // Remove weight noises under 1 gram
       weight = 0;
     }
 
@@ -137,6 +183,24 @@ void loop()
         delay(3);
       }
       isLidOpen = false;
+
+      if (WiFi.status() == WL_CONNECTED)
+      {
+        const double dist = heightSrf.getCentimeter();
+        double weight = scale.get_units() * -1000;
+        if (weight < 1)
+        { // Remove weight noises under 1 gram
+          weight = 0;
+        }
+
+        DynamicJsonDocument data(1024);
+        data["deviceId"] = "esp32a";
+        data["weight"] = weight;
+        data["height"] = dist;
+        char json[200];
+        serializeJson(data, json);
+        sendData(json, "/postWeight");
+      }
     }
   }
   count += 1;
