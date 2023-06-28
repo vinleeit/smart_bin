@@ -1,0 +1,13 @@
+version: '3.9'
+services:
+  smart_bin_server:
+    container_name: smart_bin_server
+    image: smart_bin_server
+    ports:
+      - "${SERVER_PORT}:${SERVER_PORT}"
+    build:
+      dockerfile: dev.Dockerfile
+    volumes:
+      - ./cmd/:/smart_bin/server/cmd
+      - ./pkg/:/smart_bin/server/pkg
+      - ./.env:/smart_bin/server/.env
