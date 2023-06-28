@@ -1,0 +1,37 @@
+<mxfile host="Electron" modified="2023-06-28T08:30:46.294Z" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/21.3.7 Chrome/112.0.5615.204 Electron/24.5.0 Safari/537.36" etag="m_HR8PyU_j03Mnf1eyfY" version="21.3.7" type="device">
+  <diagram name="Page-1" id="3-Kusr8PeL8G7iRzZjqA">
+    <mxGraphModel dx="574" dy="338" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="TzbilVc_gsBok2wx4rR0-2" value="Device" style="swimlane;childLayout=stackLayout;horizontal=1;startSize=50;horizontalStack=0;rounded=0;fontSize=14;fontStyle=0;strokeWidth=1;resizeParent=0;resizeLast=1;shadow=0;dashed=0;align=center;arcSize=4;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="120" y="120" width="160" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="TzbilVc_gsBok2wx4rR0-3" value="ProductKey (PK)&lt;br&gt;Description" style="align=left;strokeColor=none;fillColor=none;spacingLeft=4;fontSize=12;verticalAlign=top;resizable=0;rotatable=0;part=1;html=1;" vertex="1" parent="TzbilVc_gsBok2wx4rR0-2">
+          <mxGeometry y="50" width="160" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="TzbilVc_gsBok2wx4rR0-8" value="Log" style="swimlane;childLayout=stackLayout;horizontal=1;startSize=50;horizontalStack=0;rounded=0;fontSize=14;fontStyle=0;strokeWidth=1;resizeParent=0;resizeLast=1;shadow=0;dashed=0;align=center;arcSize=4;whiteSpace=wrap;html=1;swimlaneLine=1;fillColor=default;" vertex="1" parent="1">
+          <mxGeometry x="400" y="120" width="160" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="TzbilVc_gsBok2wx4rR0-9" value="Timestamp (PK)&lt;br&gt;Weight&lt;br&gt;Height" style="align=left;strokeColor=none;fillColor=none;spacingLeft=4;fontSize=12;verticalAlign=top;resizable=0;rotatable=0;part=1;html=1;" vertex="1" parent="TzbilVc_gsBok2wx4rR0-8">
+          <mxGeometry y="50" width="160" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="TzbilVc_gsBok2wx4rR0-17" value="PK" style="endArrow=box;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;edgeStyle=orthogonalEdgeStyle;endFill=0;endSize=19;" edge="1" parent="1" source="TzbilVc_gsBok2wx4rR0-3" target="TzbilVc_gsBok2wx4rR0-9">
+          <mxGeometry x="0.8333" relative="1" as="geometry">
+            <mxPoint x="280" y="165" as="sourcePoint" />
+            <mxPoint x="420" y="190" as="targetPoint" />
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="TzbilVc_gsBok2wx4rR0-19" value="1..1" style="edgeLabel;resizable=0;html=1;align=left;verticalAlign=bottom;" connectable="0" vertex="1" parent="TzbilVc_gsBok2wx4rR0-17">
+          <mxGeometry x="-1" relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="TzbilVc_gsBok2wx4rR0-20" value="0..N" style="edgeLabel;resizable=0;html=1;align=right;verticalAlign=bottom;" connectable="0" vertex="1" parent="TzbilVc_gsBok2wx4rR0-17">
+          <mxGeometry x="1" relative="1" as="geometry">
+            <mxPoint y="-15" as="offset" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
