@@ -6,6 +6,7 @@
 LiquidCrystal_I2C lcd(0x27, 2, 16);
 Servo servo;
 SRF05 srfMotion(32, 35);
+SRF05 srfCapacity(33, 34);
 
 enum LidStatus {
   closed,
@@ -91,8 +92,9 @@ void setup() {
   lcd.backlight();
 
   srfMotion.setCorrectionFactor(1.035);
+  srfCapacity.setCorrectionFactor(1.035);
 
-  servo.attach(33);
+  servo.attach(25);
   servo.write(0);
 
   init_clk(10, 400);
@@ -104,6 +106,10 @@ void loop() {
     displayLcd("HELLO", 0);
   } else if (clk == 400) {
     displayLcd("BYE", 0);
+  }
+
+  if (clk % 50 == 0) {
+    displayLcd("Capacity: " + String(srfCapacity.getCentimeter()) + "cm", 1);
   }
 
   updateLid();
