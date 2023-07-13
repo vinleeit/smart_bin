@@ -2,8 +2,10 @@ package db
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/xiaoming857/smart_bin/server/pkg/envs"
+	"github.com/xiaoming857/smart_bin/server/pkg/models"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -22,6 +24,20 @@ func InitSQLite() error {
 		SQLiteDB = db
 	}
 
-	// SQLiteDB.AutoMigrate()
+	if err := SQLiteDB.AutoMigrate(&models.User{}); err != nil {
+		return fmt.Errorf("failed to automigrate user model: %s", err)
+	}
+
+	var isUserExist bool
+	if SQLiteDB.Model(&models.User{}).Select("count(*) > 0").Where("username = ?", envs.DefaultUsername).Find(&isUserExist); !isUserExist {
+		user := models.User{
+			Username: envs.DefaultUsername,
+			Password: envs.DefaultUserPassword,
+		}
+		if err := SQLiteDB.Create(&user).Error; err != nil {
+			return fmt.Errorf("unable to create default user: %s", err.Error())
+		}
+		log.Println("default user created")
+	}
 	return nil
 }
